@@ -1,34 +1,32 @@
 const fs = require("fs");
 const path = require("path");
 
-// Mapa para armazenar cooldown
 const cooldowns = new Map();
 
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
     
-    // --- SISTEMA DE COOLDOWN (Anti-Spam) ---
+    // --- SISTEMA DE COOLDOWN ---
     const userId = interaction.user.id;
     const now = Date.now();
-    const cooldownAmount = 3000; // 3 segundos de cooldown entre interações
+    const cooldownAmount = 3000;
 
     if (cooldowns.has(userId)) {
       const expirationTime = cooldowns.get(userId) + cooldownAmount;
       if (now < expirationTime) {
         const timeLeft = (expirationTime - now) / 1000;
-        // Ignora silenciosamente ou avisa (pode remover o return se quiser permitir spam)
         return interaction.reply({ 
-            content: `⏳ Calma! Espere ${timeLeft.toFixed(1)} segundos antes de usar outro comando.`, 
+            content: `⏳ Espere ${timeLeft.toFixed(1)} segundos.`, 
             ephemeral: true 
         }).catch(() => {});
       }
     }
     cooldowns.set(userId, now);
     setTimeout(() => cooldowns.delete(userId), cooldownAmount);
-    // ---------------------------------------
+    // -----------------------
 
-    // Comandos Slash
+    // COMANDOS SLASH
     if (interaction.isChatInputCommand()) {
       const command = client.commands.get(interaction.commandName);
       if (!command) return;
@@ -36,13 +34,16 @@ module.exports = {
         await command.execute(interaction);
       } catch (error) {
         console.error("Erro no comando:", error);
-        if (!interaction.replied) {
+        // Verifica se já respondeu ou adiou
+        if (interaction.replied || interaction.deferred) {
+          await interaction.editReply({ content: "❌ Erro ao executar comando." });
+        } else {
           await interaction.reply({ content: "❌ Erro ao executar comando.", ephemeral: true });
         }
       }
     }
 
-    // Botões
+    // BOTÕES
     if (interaction.isButton()) {
       const button = client.buttons.get(interaction.customId);
       if (!button) return;
@@ -50,8 +51,11 @@ module.exports = {
         await button.execute(interaction);
       } catch (error) {
         console.error("Erro no botão:", error);
-        if (!interaction.replied) {
-          await interaction.reply({ content: "❌ Erro ao executar ação.", ephemeral: true });
+        // CORREÇÃO AQUI: Verifica se já está "pensando" (deferred)
+        if (interaction.replied || interaction.deferred) {
+          await interaction.editReply({ content: "❌ Ocorreu um erro ao processar esta ação." });
+        } else {
+          await interaction.reply({ content: "❌ Ocorreu um erro ao processar esta ação.", ephemeral: true });
         }
       }
     }
