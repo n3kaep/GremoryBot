@@ -10,13 +10,13 @@ module.exports = {
 
     try {
         // 2. Gera o Transcript (Com saveImages: false para evitar o erro de React)
-        const attachment = await transcript.createTranscript(interaction.channel, {
-            limit: -1,
-            returnType: 'attachment',
-            filename: `transcript-${interaction.channel.name}.html`,
-            saveImages: false, // CORREÇÃO AQUI
-            poweredBy: false
-        });
+       const attachment = await transcript.createTranscript(interaction.channel, {
+      limit: -1,
+      returnType: 'attachment',
+       filename: `transcript-${interaction.channel.name}.html`,
+       saveImages: false, // <- ALTERAÇÃO IMPORTANTE
+      poweredBy: false
+});
 
         // 3. Envia para o Log
         const logChannel = interaction.guild.channels.cache.get(process.env.LOG_CHANNEL_ID);
