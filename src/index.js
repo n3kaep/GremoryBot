@@ -1,3 +1,15 @@
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('✅ Gremory Bot está online e funcionando!');
+});
+
+app.listen(port, () => {
+  console.log(`🟢 Servidor web ouvindo na porta ${port}`);
+});
+
 require("dotenv").config();
 
 const fs = require("fs");
