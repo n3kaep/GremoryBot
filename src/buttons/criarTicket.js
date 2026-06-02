@@ -6,7 +6,6 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
-const PremiumEmbed = require("../utils/EmbedBuilder");
 
 module.exports = {
   id: "criar_ticket",
