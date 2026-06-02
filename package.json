@@ -7,7 +7,7 @@
     "bson": "^7.2.0",
     "clsx": "^1.2.1",
     "csstype": "^3.2.3",
-    "discord-api-types": "^0.38.48",
+    "discord-api-types": "^0.38.48"
     "discord-markdown-parser": "^1.1.0",
     "discord.js": "^14.26.4",
     "dotenv": "^17.4.2",
